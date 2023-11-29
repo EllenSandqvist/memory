@@ -11,3 +11,4 @@ Spela memory mot dig själv och försök tömma spelplanen på så få drag som 
 - Lycka till med minnesträningen! 🐘💫
 
 [Här kan du testa spelet](https://solo-memory-game.netlify.app/)
+

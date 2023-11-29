@@ -1,24 +1,38 @@
 const startBtn = document.getElementById('start-button');
-let playerMooves = 2;
+
+// player has 2 moves on every turn
+let playerMoves = 2;
+
+//variable for free move after finding a pair
 let isFreeMove = false;
 
+//variable to stop player from turning more than two cards at the time
 let gameRunning = false;
+
 let scoreBoard;
 
 let playerCard1;
 let playerCard2;
 
+//variable to keep track of number of moves
 let totalMoves = 0;
 
 const gameArea = document.getElementById('game-area');
+
+//Arrays for playcards and card pictures
 const emojis = ["❤️", "❤️", "😎", "😎", "🤡", "🤡", "👽", "👽", "💩", "💩", "🦝", "🦝", "🦄", "🦄", "🐳", "🐳", "🌈", "🌈"];
 const playCards= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+
+// *************************** GAME START *******************************************
 
 //add eventlistener on start-btn with function to start game
 startBtn.addEventListener('click', startGame);
 
 
+// ------------ Function to start game ------------------------------------
 function startGame(){
+
     //Hide game rules and start button
     const rules = document.getElementById('rules');
     rules.classList.add('display-none');
@@ -42,6 +56,7 @@ function startGame(){
         location.reload();
     });
 
+    //Loop through the playCards array and create the playcards with front and backside
     playCards.forEach(function(playCard){
         //create a frontside and a backside div for each card and a parent div
         let gameCard = document.createElement('div');
@@ -83,22 +98,22 @@ function startGame(){
 
 // ----------------------------------------------------------------------------------
 function flipCard(card){
-    if (playerMooves === 2){
+    if (playerMoves === 2){
         playerCard1 = card;
 
         //adding class for flipping card
         playerCard1.classList.add("is-flipped");
-        playerMooves--;
+        playerMoves--;
 
-    } else if (playerMooves === 1 && card != playerCard1) {
+    } else if (playerMoves === 1 && card != playerCard1) {
         playerCard2 = card;
         
         //adding class for flipping card
         playerCard2.classList.add("is-flipped");
-        playerMooves--;
+        playerMoves--;
         
     }  
-    if (playerMooves === 0) {
+    if (playerMoves === 0) {
         gameRunning = true;
         checkPairs();
     }
@@ -131,7 +146,7 @@ function flipCard(card){
                 checkCardsLeft();
             }, 1200);
         }
-        playerMooves = 2;
+        playerMoves = 2;
     }
 }
 
