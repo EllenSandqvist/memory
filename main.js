@@ -1,7 +1,13 @@
-const startBtn = document.getElementById('start-button');
+// player can flip 2 cards on every turn
+let playerFlips = 2;
 
-// player has 2 moves on every turn
-let playerMoves = 2;
+let playerCard1;
+let playerCard2;
+
+//variable to keep track of number of total moves
+let totalMoves = 0;
+
+let scoreBoard;
 
 //variable for free move after finding a pair
 let isFreeMove = false;
@@ -9,19 +15,12 @@ let isFreeMove = false;
 //variable to stop player from turning more than two cards at the time
 let gameRunning = false;
 
-let scoreBoard;
-
-let playerCard1;
-let playerCard2;
-
-//variable to keep track of number of moves
-let totalMoves = 0;
-
-const gameArea = document.getElementById('game-area');
-
 //Arrays for playcards and card pictures
 const emojis = ["❤️", "❤️", "😎", "😎", "🤡", "🤡", "👽", "👽", "💩", "💩", "🦝", "🦝", "🦄", "🦄", "🐳", "🐳", "🌈", "🌈"];
 const playCards= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
+
+const gameArea = document.getElementById('game-area');
+const startBtn = document.getElementById('start-button');
 
 
 // *************************** GAME START *******************************************
@@ -30,14 +29,30 @@ const playCards= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17];
 startBtn.addEventListener('click', startGame);
 
 
-// ------------ Function to start game ------------------------------------
+// ===================== MAIN FUNCTION to start game =======================================
 function startGame(){
+    // Hide game rules and start button
+    hideStartInfo();
 
-    //Hide game rules and start button
+    //create scoreboard and restart button
+    makeScorebdAndRestartBtn();
+
+    //set up the game board with memory cards
+    setupGameBoard();
+
+    //activate cards with eventlisteners
+    activatePlayCards();
+};
+
+// ===================== Function to hide game info =======================================
+function hideStartInfo(){
     const rules = document.getElementById('rules');
     rules.classList.add('display-none');
     startBtn.classList.add('display-none');
+};
 
+// ================== Function to create scoreboard & restart button=========================
+function makeScorebdAndRestartBtn(){
     //Create scoreboard
     const gameControlDiv = document.querySelector('.game-control-div');
     scoreBoard = document.createElement('p');
@@ -55,7 +70,10 @@ function startGame(){
     restartBtn.addEventListener('click', function(){
         location.reload();
     });
+};
 
+// =================== Function to setup Game board with playcards ==========================
+function setupGameBoard(){
     //Loop through the playCards array and create the playcards with front and backside
     playCards.forEach(function(playCard){
         //create a frontside and a backside div for each card and a parent div
@@ -81,59 +99,67 @@ function startGame(){
     
         cardDivFront.textContent = chosenEmoji;
     });
+};
 
+// =================== Function to activate playcards with eventlisteners ==========================
+function activatePlayCards(){
     //Get all elements with the HTML-class "game-card"
     const allGameCards = document.querySelectorAll('.game-card');
 
     allGameCards.forEach(function(card){
         card.addEventListener('click', function(){
+            //check if game running is true - if not cards can be flipped
             if(!gameRunning){
                 flipCard(card);
             }
         });
     });
+}
 
-};
-
-
-// ----------------------------------------------------------------------------------
+// =================== Function to flip cards ======================================================
 function flipCard(card){
-    if (playerMoves === 2){
+    if (playerFlips === 2){
         playerCard1 = card;
 
         //adding class for flipping card
         playerCard1.classList.add("is-flipped");
-        playerMoves--;
+        playerFlips--;
 
-    } else if (playerMoves === 1 && card != playerCard1) {
+    } else if (playerFlips === 1 && card != playerCard1) {
         playerCard2 = card;
         
         //adding class for flipping card
         playerCard2.classList.add("is-flipped");
-        playerMoves--;
+        playerFlips--;
         
     }  
-    if (playerMoves === 0) {
+    if (playerFlips === 0) {
+        //Setting gameRunning= true prevents player from flipping more cards
         gameRunning = true;
         checkPairs();
     }
 
-    // -------------------------------------------------------------------
+// =================== Function to Check pairs ======================================================
     function checkPairs(){
         if(playerCard1.textContent === playerCard2.textContent){
             playerCard1.classList.add('hidden-cards');
             playerCard2.classList.add('hidden-cards');
 
+            //isFreeMove is true if previous move yielded a pair 
             if(!isFreeMove) {
+                //if isFreeMove is false a move will be added to totalMoves
                 totalMoves++;
                 scoreBoard.textContent = "Antal drag: " + totalMoves;
             }
 
+            //if move yielded a par isFreeMove is changed to true
             isFreeMove = true;
             checkCardsLeft();
 
         } else {
+            //setTimeout is used to flip back the cards aftes 1,2s
             setTimeout(function(){
+                //cards are turned back by removing the "is-flipped" class
                 playerCard1.classList.remove("is-flipped");
                 playerCard2.classList.remove("is-flipped");
                 
@@ -142,16 +168,17 @@ function flipCard(card){
                     scoreBoard.textContent = "Antal drag: " + totalMoves;
                 }
 
+                //if move did not yield a par isFreeMove is set to false
                 isFreeMove = false;
                 checkCardsLeft();
             }, 1200);
         }
-        playerMoves = 2;
+        //when one move is over playerMoves is set back to 2
+        playerFlips = 2;
     }
 }
 
-// ----------------------------------------------------------------------------------
-// ----------------------------------------------------------------------------------
+// =================== Function to Check if there are cards left ================================================
 function checkCardsLeft(){
     const cardsRemoved = document.querySelectorAll('.hidden-cards');
     if(cardsRemoved.length === 18){
@@ -160,5 +187,6 @@ function checkCardsLeft(){
         rules.classList.remove('display-none');
         rules.innerHTML = "💫🥇 Snyggt!!! 🥇💫<br>Du avslutade spelet på " + totalMoves + " drag."
     }
+    //When one move is over gameRunning is changed back to false
     gameRunning = false;
 }
