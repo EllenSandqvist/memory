@@ -43,6 +43,8 @@ function startGame(){
     //activate cards with eventlisteners
     activatePlayCards();
 };
+// =========================================================================================
+
 
 // ===================== Function to hide game info =======================================
 function hideStartInfo(){
@@ -185,7 +187,16 @@ function checkCardsLeft(){
         console.log("spelet är slut");
         gameArea.innerHTML= "";
         rules.classList.remove('display-none');
-        rules.innerHTML = "💫🥇 Snyggt!!! 🥇💫<br>Du avslutade spelet på " + totalMoves + " drag."
+        if(totalMoves < 7){
+            rules.innerHTML = "💫🥇 MÄSTARNIVÅ!!! 🥇💫<br>Du avslutade spelet på otroliga " + totalMoves + " drag!"
+        } else if (totalMoves >= 7 && totalMoves < 10){
+            rules.innerHTML = "💫 Snyggt!!! 💫<br>Du avslutade spelet på finfina " + totalMoves + " drag."
+        } else if (totalMoves >= 10 && totalMoves < 14){
+            rules.innerHTML = "Godkänt! <br>Du avslutade spelet på " + totalMoves + " drag."
+        } else {
+            rules.innerHTML = "Träna lite mer, övning ger färdighet! <br>Du avslutade spelet på " + totalMoves + " drag."
+        }
+        
     }
     //When one move is over gameRunning is changed back to false
     gameRunning = false;
